@@ -1,0 +1,13 @@
+# Windows と Mac が混ざっても改行コードがそろうようにする
+# （何も変えていないのに「全行が変更された」ように見えるのを防ぐ）
+* text=auto
+
+# Windows 専用のファイルは CRLF のまま
+*.sln  text eol=crlf
+*.bat  text eol=crlf
+*.cmd  text eol=crlf
+
+# 画像などは変換しない
+*.png  binary
+*.jpg  binary
+*.ico  binary

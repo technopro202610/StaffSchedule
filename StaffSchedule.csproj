@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>StaffSchedule</RootNamespace>
+    <!-- DBのパスワードを Git に入れず、PCの中（ユーザーシークレット）に保存するための識別子 -->
+    <UserSecretsId>staff-schedule-training-2026</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- PostgreSQL に接続するためのライブラリ（Npgsql） -->
+    <PackageReference Include="Npgsql" Version="10.0.3" />
+  </ItemGroup>
+
+</Project>

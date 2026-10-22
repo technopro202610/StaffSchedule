@@ -1,0 +1,6 @@
+{
+  // VS Code でこのフォルダーを開いたときに、入れておくべき拡張機能を案内する
+  "recommendations": [
+    "ms-dotnettools.csdevkit"
+  ]
+}
