@@ -25,32 +25,31 @@ BEGIN;
 TRUNCATE notice_reads, schedules, member_delete_logs, members RESTART IDENTITY;
 
 -- ② メンバー
---    ログインできる人（users）と同じメールアドレスの人は user_id で結び付ける
+--    ※ ログインできる人（users）とは結び付けない（別のもの）
 --    期間外の人は「削除日 = 期間外になった日 ＋ 6か月」になるよう、削除日から逆算して入れる
-INSERT INTO members (name, kana, user_id, is_standby, standby_off_since, work_system, work_start, work_end)
+INSERT INTO members (name, kana, is_standby, standby_off_since, work_system, work_start, work_end)
 SELECT d.name, d.kana,
-       (SELECT u.user_id FROM users u WHERE u.email = d.email),
        d.off_in IS NULL,
        CASE WHEN d.off_in IS NULL THEN NULL
             ELSE (current_date + d.off_in - interval '6 months')::date END,
        d.sys, d.s, d.e
 FROM (VALUES
-    -- 名前,          ふりがな,             メールアドレス,                   削除まで何日（NULL＝期間中）, 勤務システム, 開始, 終了
-    ('青木 花子',      'あおき はなこ',       'aoki.hanako@example.com',        NULL::int, '標準勤務', TIME '09:00', TIME '18:00'),
-    ('加藤 美咲',      'かとう みさき',       'kato.misaki@example.com',        NULL,      '標準勤務', '09:00', '18:00'),
-    ('小林 竜也',      'こばやし たつや',     'kobayashi.tatsuya@example.com',  NULL,      '標準勤務', '09:00', '18:00'),
-    ('佐藤 健太',      'さとう けんた',       'sato.kenta@example.com',         NULL,      '標準勤務', '09:00', '18:00'),
-    ('高橋 健太',      'たかはし けんた',     'takahashi.kenta@example.com',    NULL,      '標準勤務', '09:00', '18:00'),
-    ('田中 直樹',      'たなか なおき',       'tanaka.naoki@example.com',       NULL,      '標準勤務', '09:00', '18:00'),
-    ('山田 太郎',      'やまだ たろう',       'yamada.taro@example.com',        NULL,      '標準勤務', '09:00', '18:00'),
-    ('山本 由香',      'やまもと ゆか',       'yamamoto.yuka@example.com',      NULL,      '標準勤務', '09:00', '18:00'),
-    ('長谷川原 美咲子', 'はせがわら みさこ',  NULL,                             NULL,      '標準勤務', '09:00', '18:00'),
-    ('渡辺 涼',        'わたなべ りょう',     'watanabe.ryo@example.com',       2,         '標準勤務', '09:00', '18:00'),
-    ('中村 みほ',      'なかむら みほ',       'nakamura.miho@example.com',      7,         '標準勤務', '09:00', '18:00'),
-    ('鈴木 一郎',      'すずき いちろう',     'suzuki.ichiro@example.com',      10,        '早番勤務', '08:30', '17:30'),
-    ('吉田 さくら',    'よしだ さくら',       'yoshida.sakura@example.com',     60,        '遅番勤務', '10:00', '19:00'),
-    ('井上 翼',        'いのうえ つばさ',     NULL,                             -5,        '標準勤務', '09:00', '18:00')
-) AS d(name, kana, email, off_in, sys, s, e);
+    -- 名前,           ふりがな,             削除まで何日（NULL＝期間中）, 勤務システム, 開始, 終了
+    ('青木 花子',       'あおき はなこ',      NULL::int, '標準勤務', TIME '09:00', TIME '18:00'),
+    ('加藤 美咲',       'かとう みさき',      NULL,      '標準勤務', '09:00', '18:00'),
+    ('小林 竜也',       'こばやし たつや',    NULL,      '標準勤務', '09:00', '18:00'),
+    ('佐藤 健太',       'さとう けんた',      NULL,      '標準勤務', '09:00', '18:00'),
+    ('高橋 健太',       'たかはし けんた',    NULL,      '標準勤務', '09:00', '18:00'),
+    ('田中 直樹',       'たなか なおき',      NULL,      '標準勤務', '09:00', '18:00'),
+    ('山田 太郎',       'やまだ たろう',      NULL,      '標準勤務', '09:00', '18:00'),
+    ('山本 由香',       'やまもと ゆか',      NULL,      '標準勤務', '09:00', '18:00'),
+    ('長谷川原 美咲子', 'はせがわら みさこ',  NULL,      '標準勤務', '09:00', '18:00'),
+    ('渡辺 涼',         'わたなべ りょう',    2,         '標準勤務', '09:00', '18:00'),
+    ('中村 みほ',       'なかむら みほ',      7,         '標準勤務', '09:00', '18:00'),
+    ('鈴木 一郎',       'すずき いちろう',    10,        '早番勤務', '08:30', '17:30'),
+    ('吉田 さくら',     'よしだ さくら',      60,        '遅番勤務', '10:00', '19:00'),
+    ('井上 翼',         'いのうえ つばさ',    -5,        '標準勤務', '09:00', '18:00')
+) AS d(name, kana, off_in, sys, s, e);
 
 -- ③ 予定：期間中の人の、先週の月曜〜再来週の金曜の平日に「出社」（所定時間）
 INSERT INTO schedules (member_id, work_date, item_code, start_time, end_time)

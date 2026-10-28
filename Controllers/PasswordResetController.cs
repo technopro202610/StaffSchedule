@@ -5,7 +5,8 @@ using StaffSchedule.Services;
 namespace StaffSchedule.Controllers;
 
 /// <summary>
-/// パスワード再設定の画面から呼ばれるAPI（ログインしていなくても使える）。
+/// 【No9 パスワード再設定画面】から呼ばれるAPI（ログインしていなくても使える）。
+/// ① の結果は【No10 メール送信完了画面】に表示する。画面側：wwwroot/screens/no09_reset.js
 ///   POST /api/auth/password-reset/request … ① 再設定のメールを送る
 ///   GET  /api/auth/password-reset/verify  … ② メールのリンクがまだ使えるか確かめる
 ///   POST /api/auth/password-reset/confirm … ③ 新しいパスワードに変える

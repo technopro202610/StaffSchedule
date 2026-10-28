@@ -1,0 +1,102 @@
+/* No8 年間カレンダー（日付選択） */
+
+.cal-pop {
+  width: min(760px, calc(100vw - 32px));
+  padding: 14px;
+}
+.cal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.cal-head b {
+  font-size: 16px;
+}
+.cal-head .ghost:hover {
+  background: var(--surface2);
+}
+.months {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+@media (max-width: 720px) {
+  .months {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+.mon {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.mon h4 {
+  margin: 0;
+  background: var(--accent);
+  color: #fff;
+  font-size: 12.5px;
+  text-align: center;
+  padding: 4px 0;
+  font-weight: 700;
+}
+.mon table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11.5px;
+  font-family: var(--mono);
+}
+.mon th {
+  font-family: var(--font);
+  font-weight: 500;
+  color: var(--accent);
+  padding: 3px 0;
+  font-size: 11px;
+  border-bottom: 1px solid var(--line);
+}
+.mon th:first-child,
+.mon td:first-child button {
+  color: var(--sun);
+}
+.mon th:last-child,
+.mon td:last-child button {
+  color: var(--sat);
+}
+.mon td button.hol {
+  color: var(--sun);
+}
+.mon td {
+  padding: 0;
+  text-align: center;
+}
+.mon td button {
+  width: 100%;
+  border: 1px solid transparent;
+  background: none;
+  padding: 2px 0;
+  border-radius: 4px;
+  font-family: inherit;
+}
+.mon td button:hover {
+  background: var(--accent-soft);
+}
+.mon td button.sel {
+  background: var(--accent-soft);
+}
+.mon td button.td {
+  border-color: var(--today);
+  font-weight: 700;
+}
+.cal-foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  font-size: 13px;
+}
+.mon td button:disabled,
+.mon td button:disabled:hover {
+  opacity: 0.25;
+  cursor: not-allowed;
+  background: none;
+}

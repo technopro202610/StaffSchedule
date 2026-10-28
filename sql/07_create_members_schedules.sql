@@ -17,7 +17,6 @@ CREATE TABLE IF NOT EXISTS members
     member_id               INTEGER       GENERATED ALWAYS AS IDENTITY,
     name                    VARCHAR(30)   NOT NULL,                    -- 名前（空白は半角1つにそろえる）
     kana                    VARCHAR(40)   NOT NULL,                    -- ふりがな（ひらがな）。50音順に使う
-    user_id                 INTEGER       NULL,                        -- ログインできる人と同じ人なら利用者ID
     is_standby              BOOLEAN       NOT NULL DEFAULT TRUE,       -- TRUE＝期間中、FALSE＝期間外
     standby_off_since       DATE          NULL,                        -- 期間外になった日
     last_schedule_added_on  DATE          NULL,                        -- 最後に予定を保存した日
@@ -28,12 +27,12 @@ CREATE TABLE IF NOT EXISTS members
     updated_at              TIMESTAMPTZ   NOT NULL DEFAULT now(),
 
     CONSTRAINT pk_members PRIMARY KEY (member_id),
-    CONSTRAINT uq_members_user UNIQUE (user_id),
-    CONSTRAINT fk_members_user FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE SET NULL,
     CONSTRAINT ck_members_kana CHECK (kana ~ '^[ぁ-ゖー ]+$'),
     CONSTRAINT ck_members_off_since CHECK (is_standby OR standby_off_since IS NOT NULL)
 );
 CREATE INDEX IF NOT EXISTS ix_members_kana ON members (kana);
+-- ※ ログインできる人（users）とメンバーは結び付けない（仕様変更）。前に作った DB にある user_id 列は消す
+ALTER TABLE members DROP COLUMN IF EXISTS user_id;
 
 CREATE TABLE IF NOT EXISTS schedules
 (

@@ -22,9 +22,9 @@ C# から PostgreSQL につなぐライブラリ（Npgsql）は、初回ビル�
 ブラウザ（wwwroot/index.html ＋ 画面ごとの screens/*.html・*.js）
    │  fetch で JSON を送受信／ログイン状態は Cookie
    ▼
-AuthController ……… APIの入口（URLとHTTPステータスを決める）
+LoginController／RegisterController … APIの入口（画面ごと。URLとHTTPステータスを決める）
    ▼
-AuthService ………… 業務ルール（入力チェック・パスワード照合）
+LoginService／RegisterService …… 業務ルール（画面ごと。入力チェック・パスワード照合）
    ├─ Pbkdf2PasswordHasher … パスワードのハッシュ化・照合
    ▼
 UserRepository ……… SQLを実行する（users テーブルを読み書き）
@@ -49,14 +49,19 @@ PostgreSQL（staff_schedule データベース / users テーブル）
 | `sql/09_setup_local_all.sql` | 自分のPCにデータ入りのDBを作る（02・03・06・07・08 をまとめたもの）。pgAdmin の Query Tool で1回実行するだけ |
 | `sql/00_setup_all.sql` | 01〜03・05〜08 をまとめたもの。psql で1回実行すると、データ入りの共有DBができる |
 | `sql/setup_shared_db.ps1` | 講師（DB担当）PCを共有DBにする（Wi-Fiの設定・ファイアウォール・00 の実行・接続情報カードの作成）。管理者のターミナルで実行 |
-| `Controllers/PasswordResetController.cs` | API：パスワード再設定（申請・リンク確認・変更） |
-| `Services/PasswordResetService.cs` | 再設定のルール（トークン作成・期限・メール文面） |
+| `Controllers/PasswordResetController.cs` | 【No9・No10】API：パスワード再設定（申請・リンク確認・変更） |
+| `Services/PasswordResetService.cs` | 【No9・No10】再設定のルール（トークン作成・期限・メール文面） |
 | `Services/PasswordRules.cs` | パスワードの決まり（登録と再設定で共通） |
 | `Services/EmailSender.cs` | メール送信（SMTP／研修用は `mails` フォルダーに保存） |
 | `Repositories/PasswordResetRepository.cs` | SQL（トークンの登録・確認・使用済み化とパスワード更新） |
 | `Program.cs` | 起動設定（部品の登録、Cookie認証、画面の配信） |
-| `Controllers/AuthController.cs` | API：登録・ログイン・ログアウト・ログイン中ユーザー |
-| `Services/AuthService.cs` | 入力チェックとログイン判定 |
+| `Controllers/LoginController.cs` | 【No1】API：ログイン・ログアウト・ログイン中ユーザー |
+| `Controllers/RegisterController.cs` | 【No2】API：ユーザー登録 |
+| `Services/LoginService.cs` | 【No1】ログインの照合 |
+| `Services/RegisterService.cs` | 【No2】登録の入力チェックと登録 |
+| `Services/UserInput.cs` | 入力値のそろえ方（メールアドレスの小文字化など。共通） |
+| `Models/LoginModels.cs`・`RegisterModels.cs`・`PasswordResetModels.cs` | 画面ごとの、画面 ⇔ API のデータの形 |
+| `Models/CommonModels.cs` | 共通のデータの形（UserResponse・ErrorResponse） |
 | `Services/PasswordHasher.cs` | パスワードのハッシュ化（PBKDF2） |
 | `Repositories/UserRepository.cs` | SQL（SELECT / INSERT … RETURNING / UPDATE） |
 | `Data/DbConnectionFactory.cs` | PostgreSQL への接続の作成 |
@@ -172,7 +177,7 @@ DBは講師の「DB用PC」1台にまとめ、受講者は各自のPCの C# か�
 ### ユーザー登録
 1. 画面で入力チェック（すぐに結果を見せるため）
 2. `POST /api/auth/register`
-3. `AuthService` で **同じチェックをもう一度**（画面のチェックは回避できるため、サーバー側が本番）
+3. `RegisterService` で **同じチェックをもう一度**（画面のチェックは回避できるため、サーバー側が本番）
 4. `SELECT EXISTS (…)` でメールアドレスの重複を確認
 5. パスワードをハッシュ化して `INSERT … RETURNING`（採番された `user_id` をそのまま受け取る）
 6. 画面はログイン画面に戻り、メールアドレスが入った状態になる
@@ -200,18 +205,18 @@ DBは講師の「DB用PC」1台にまとめ、受講者は各自のPCの C# か�
 |---|---|
 | **SQLインジェクション対策**：値は必ずパラメーター（`@email`）で渡す | `UserRepository.cs` |
 | **パスワードを平文で保存しない**：ソルト付きPBKDF2でハッシュ化 | `PasswordHasher.cs` |
-| **画面とサーバーの両方で入力チェック** | `index.html` と `AuthService.cs` |
+| **画面とサーバーの両方で入力チェック** | `screens/no02_register.js` と `RegisterService.cs` |
 | **重複はDBの制約でも防ぐ**：UNIQUE制約＋エラーコード `23505` の処理 | `02_create_tables.sql`、`UserRepository.cs` |
 | **データの決まりをDBに持たせる**：メールアドレスは小文字（CHECK制約） | `02_create_tables.sql` |
-| **ログイン失敗の理由を画面に出さない**：IDの存在を推測されないように | `AuthService.cs`、`AuthController.cs` |
-| **HTTPステータスの使い分け**：201 / 400 / 401 / 204 | `AuthController.cs` |
+| **ログイン失敗の理由を画面に出さない**：IDの存在を推測されないように | `LoginService.cs`、`LoginController.cs` |
+| **HTTPステータスの使い分け**：201 / 400 / 401 / 204 | `LoginController.cs`・`RegisterController.cs` |
 | **Cookieの安全設定**：HttpOnly、SameSite=Strict | `Program.cs` |
 | **再設定リンクの安全な作り方**：乱数のトークン、DBにはハッシュだけ、期限30分、1回限り、登録の有無を答えない | `PasswordResetService.cs`、`PasswordResetRepository.cs` |
 
 **演習のアイデア**
 - 04 のクエリで `is_active = FALSE` にして、ログインできなくなることを確かめる
 - ログイン失敗回数を数える列を追加し、5回失敗したらロックする
-- 登録項目に「フリガナ」を追加する（テーブル → Models → AuthService → 画面の順に手を入れる）
+- 登録項目に「フリガナ」を追加する（テーブル → Models → RegisterService → 画面の順に手を入れる）
 
 ## 8. まだダミーのままの部分
 

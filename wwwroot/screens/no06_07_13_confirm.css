@@ -1,0 +1,55 @@
+/* No6・No7・No13 確認ダイアログ */
+
+/* ---------- 削除ボタン・削除の確認 ---------- */
+/* 削除ボタン・削除の確認 */
+.mini-btn.danger {
+  border-color: var(--e-fg);
+  color: var(--e-fg);
+}
+.mini-btn.danger:hover {
+  background: var(--e-bg);
+}
+.btn-danger {
+  background: var(--e-fg);
+  border-color: var(--e-fg);
+  color: #fff;
+}
+.btn-danger:hover {
+  background: var(--e-fg);
+  border-color: var(--e-fg);
+  color: #fff;
+  filter: brightness(1.12);
+}
+.del-names {
+  margin: 4px 0 0;
+  padding: 8px 12px 8px 30px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  max-height: 200px;
+  overflow: auto;
+  display: grid;
+  gap: 2px;
+  font-size: 14px;
+}
+.confirm-warn {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--e-fg);
+  font-weight: 700;
+}
+
+/* ---------- はい・いいえの確認 ---------- */
+/* はい・いいえの確認 */
+.modal.confirm-modal {
+  max-width: 380px;
+}
+.confirm-msg {
+  margin: 4px 0 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+.confirm-sub {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+}

@@ -1,24 +1,118 @@
 /* =========================================================
    No8 年間カレンダー（日付選択）
+   ヘッダーのカレンダーのボタンで開く、12か月分のカレンダー。
+     ・日付を押す → その日を含む週を予定表に出す（処理は no03_calendar.js のクリックの振り分け）
+     ・「＜」「＞」で前の年・次の年（今日の前後1年まで）
+     ・表示できる期間（今日の前後1年）の外の日は押せない
    ========================================================= */
 "use strict";
 
-/* ---------- 12-month calendar popover ---------- */
-function placePop(pop,anchor){const r=anchor.getBoundingClientRect();const w=pop.offsetWidth;let left=r.right+window.scrollX-w;left=Math.max(16+window.scrollX,Math.min(left,window.scrollX+document.documentElement.clientWidth-w-16));pop.style.left=left+"px";pop.style.top=(r.bottom+window.scrollY+8)+"px";}
-function calHTML(){
-  const y=S.calYear,ty=TODAY.getFullYear(),lo=dayMin(),hi=dayMax();let h=`<div class="cal-head"><button class="ghost" data-cal="-1" aria-label="前の年"${y<=ty-1?" disabled":""}>${I.prev}</button><b class="num">${y}年</b><button class="ghost" data-cal="1" aria-label="次の年"${y>=ty+1?" disabled":""}>${I.next}</button></div><div class="months">`;
-  const selFrom=ymd(S.week),selTo=ymd(addDays(S.week,6));
-  for(let mo=0;mo<12;mo++){
-    h+=`<div class="mon"><h4>${y}年${mo+1}月</h4><table><thead><tr>${[..."日月火水木金土"].map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody><tr>`;
-    const first=new Date(y,mo,1),n=new Date(y,mo+1,0).getDate();
-    for(let i=0;i<first.getDay();i++)h+="<td></td>";
-    for(let d=1;d<=n;d++){const dt=new Date(y,mo,d),ds=ymd(dt);if(dt.getDay()===0&&d>1)h+="</tr><tr>";
-      const c=[],hol=holidayName(dt);if(hol)c.push("hol");if(ds>=selFrom&&ds<=selTo)c.push("sel");if(sameDay(dt,TODAY))c.push("td");
-      const out=ds<lo||ds>hi;
-      h+=`<td><button class="${c.join(" ")} num"${out?' disabled title="表示できる期間（今日の前後1年）の外です"':` data-date="${ds}"`} aria-label="${y}年${mo+1}月${d}日${hol?"（"+hol+"）":""}"${hol?` title="${hol}"`:""}>${d}</button></td>`;}
-    h+="</tr></tbody></table></div>";}
-  h+=`</div><div class="cal-foot">今日: <span class="num">${TODAY.getFullYear()}/${pad(TODAY.getMonth()+1)}/${pad(TODAY.getDate())}</span></div>`;return h;
+// 1日分のボタン（日付）の HTML を作る
+//   選べる範囲：minDay 〜 maxDay（"YYYY-MM-DD"）、表示中の週：weekFrom 〜 weekTo
+function yearDayHtml(date, minDay, maxDay, weekFrom, weekTo) {
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  const dateText = toDateText(date);
+  const holiday = holidayName(date);
+
+  // ボタンの見た目：祝日＝赤、表示中の週＝薄い青、今日＝紺の枠
+  const classes = [];
+  if (holiday) classes.push("hol");
+  if (dateText >= weekFrom && dateText <= weekTo) classes.push("sel");
+  if (sameDay(date, TODAY)) classes.push("td");
+
+  // 範囲の外の日は押せなくする。範囲の中の日には data-date を付ける（押したときに使う）
+  const isOutOfRange = dateText < minDay || dateText > maxDay;
+  const clickPart = isOutOfRange
+    ? ' disabled title="表示できる期間（今日の前後1年）の外です"'
+    : ` data-date="${dateText}"`;
+
+  const holidayLabel = holiday ? "（" + holiday + "）" : "";
+  const holidayTitle = holiday ? ` title="${holiday}"` : "";
+
+  return `<td><button class="${classes.join(" ")} num"${clickPart} aria-label="${year}年${month}月${day}日${holidayLabel}"${holidayTitle}>${day}</button></td>`;
 }
-$("#calBtn").addEventListener("click",e=>{e.stopPropagation();if(document.getElementById("calPop")){closeLayer();return;} // 開いていればもう一度押すと閉じる
-  S.calYear=S.week.getFullYear();
-  openLayer(`<div class="pop cal-pop" role="dialog" aria-label="日付を選択" id="calPop">${calHTML()}</div>`);placePop($("#calPop"),$("#calBtn"));});
+
+// 1か月分のカレンダー（表）の HTML を作る（monthIndex は 0＝1月 〜 11＝12月）
+function yearMonthHtml(year, monthIndex, minDay, maxDay, weekFrom, weekTo) {
+  const html = [];
+  html.push(`<div class="mon"><h4>${year}年${monthIndex + 1}月</h4><table><thead><tr>`);
+  for (const weekdayName of "日月火水木金土") {
+    html.push(`<th>${weekdayName}</th>`);
+  }
+  html.push(`</tr></thead><tbody><tr>`);
+
+  // 1日が何曜日かに合わせて、前に空のマスを入れる
+  const firstDay = new Date(year, monthIndex, 1);
+  for (let i = 0; i < firstDay.getDay(); i++) {
+    html.push("<td></td>");
+  }
+
+  // 1日〜月末まで。日曜日になったら行を変える
+  const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
+  for (let day = 1; day <= daysInMonth; day++) {
+    const date = new Date(year, monthIndex, day);
+    if (date.getDay() === 0 && day > 1) {
+      html.push("</tr><tr>");
+    }
+    html.push(yearDayHtml(date, minDay, maxDay, weekFrom, weekTo));
+  }
+
+  html.push("</tr></tbody></table></div>");
+  return html.join("");
+}
+
+// 年間カレンダー（12か月分）の HTML を作る（表示する年は state.calYear）
+function calHTML() {
+  const year = state.calYear;
+  const thisYear = TODAY.getFullYear();
+  const minDay = dayMin();
+  const maxDay = dayMax();
+  const weekFrom = toDateText(state.week);
+  const weekTo = toDateText(addDays(state.week, 6));
+
+  const html = [];
+
+  // 見出し：「＜ 2026年 ＞」（前後1年より先へは進めない）
+  const prevDisabled = year <= thisYear - 1 ? " disabled" : "";
+  const nextDisabled = year >= thisYear + 1 ? " disabled" : "";
+  html.push(`<div class="cal-head">`);
+  html.push(
+    `<button class="ghost" data-cal="-1" aria-label="前の年"${prevDisabled}>${ICONS.prev}</button>`,
+  );
+  html.push(`<b class="num">${year}年</b>`);
+  html.push(
+    `<button class="ghost" data-cal="1" aria-label="次の年"${nextDisabled}>${ICONS.next}</button>`,
+  );
+  html.push(`</div>`);
+
+  // 12か月分
+  html.push(`<div class="months">`);
+  for (let monthIndex = 0; monthIndex < 12; monthIndex++) {
+    html.push(yearMonthHtml(year, monthIndex, minDay, maxDay, weekFrom, weekTo));
+  }
+  html.push(`</div>`);
+
+  // 下に今日の日付
+  const todayText = `${TODAY.getFullYear()}/${pad2(TODAY.getMonth() + 1)}/${pad2(TODAY.getDate())}`;
+  html.push(`<div class="cal-foot">今日: <span class="num">${todayText}</span></div>`);
+
+  return html.join("");
+}
+
+// ヘッダーのカレンダーのボタン：年間カレンダーを開く（開いていれば閉じる）
+getElement("#calBtn").addEventListener("click", (event) => {
+  event.stopPropagation(); // 画面全体のクリック（閉じる処理）に伝えない
+
+  if (document.getElementById("calPop")) {
+    closeLayer();
+    return;
+  }
+
+  state.calYear = state.week.getFullYear(); // 表示中の週の年から始める
+  openLayer(
+    `<div class="pop cal-pop" role="dialog" aria-label="日付を選択" id="calPop">${calHTML()}</div>`,
+  );
+  placePop(getElement("#calPop"), getElement("#calBtn"));
+});

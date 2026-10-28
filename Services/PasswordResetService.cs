@@ -6,7 +6,7 @@ using StaffSchedule.Repositories;
 namespace StaffSchedule.Services;
 
 /// <summary>
-/// パスワード再設定のルールを持つ係。
+/// 【No9 パスワード再設定画面・No10 メール送信完了画面】のルールを持つ係。
 ///   ① 申請：メールアドレスを受け取り、登録済みならリンク付きのメールを送る
 ///   ② 確認：リンク（トークン）がまだ使えるかを調べる
 ///   ③ 変更：新しいパスワードに書き換え、リンクを使用済みにする
@@ -38,7 +38,7 @@ public sealed class PasswordResetService
     // ---------------------------------------------------------
     public async Task RequestAsync(string? emailInput, string baseUrl)
     {
-        string email = AuthService.NormalizeEmail(emailInput);
+        string email = UserInput.NormalizeEmail(emailInput);
         if (email.Length == 0) return;
 
         User? user = await _users.FindByEmailAsync(email);

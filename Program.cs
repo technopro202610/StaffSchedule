@@ -15,9 +15,10 @@ builder.Services.AddControllers();                                          // A
 builder.Services.AddSingleton<IDbConnectionFactory, NpgsqlConnectionFactory>(); // DB(PostgreSQL)接続を作る係
 builder.Services.AddScoped<IUserRepository, UserRepository>();              // Usersテーブルを読み書きする係
 builder.Services.AddSingleton<IPasswordHasher, Pbkdf2PasswordHasher>();      // パスワードをハッシュ化する係
-builder.Services.AddScoped<AuthService>();                                  // 登録・ログインのルールを持つ係
+builder.Services.AddScoped<LoginService>();                                 // No1 ログインのルールを持つ係
+builder.Services.AddScoped<RegisterService>();                              // No2 新規会員登録のルールを持つ係
 builder.Services.AddScoped<IPasswordResetRepository, PasswordResetRepository>(); // 再設定トークンを読み書きする係
-builder.Services.AddScoped<PasswordResetService>();                         // パスワード再設定のルールを持つ係
+builder.Services.AddScoped<PasswordResetService>();                         // No9 パスワード再設定のルールを持つ係
 
 // --- メールを送る係 ---
 // appsettings.json の "Smtp:Host" があれば本当に送る。空なら mails フォルダーに保存する（研修・開発用）。

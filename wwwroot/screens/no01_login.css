@@ -1,0 +1,93 @@
+/* No1 ログイン画面 */
+/* ログイン系の画面（No2 新規会員登録・No9 パスワード再設定・No10 メール送信完了）も同じ枠（.login-card）を使います。 */
+
+/* ---------- 画面の配置と枠 ---------- */
+#login,
+#register,
+#forgot,
+#forgotSent,
+#reset,
+#resetInvalid {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding-block: 40px;
+}
+.to-reg {
+  margin: 0;
+  text-align: center;
+  font-size: 13px;
+  color: var(--muted);
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+.to-reg .link {
+  display: inline;
+}
+.login-card {
+  width: 100%;
+  max-width: 440px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.login-head {
+  background: var(--accent-soft);
+  padding: 26px 24px;
+  text-align: center;
+}
+.login-head h1 {
+  margin: 0;
+  font-size: 24px;
+  color: var(--navy);
+  letter-spacing: 0.04em;
+}
+:root[data-theme="dark"] .login-head h1 {
+  color: var(--fg);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .login-head h1 {
+    color: var(--fg);
+  }
+}
+.login-head p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+.login-body {
+  padding: 26px 28px 28px;
+  display: grid;
+  gap: 16px;
+}
+.field {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  align-items: center;
+  gap: 12px;
+}
+.field label {
+  font-weight: 700;
+}
+.login-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+.login-actions .btn-primary {
+  width: 100%;
+  justify-content: center;
+  height: 44px;
+  font-size: 16px;
+  font-weight: 700;
+}
+@media (max-width: 440px) {
+  .field {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .sub {
+    margin-left: 0;
+  }
+}
