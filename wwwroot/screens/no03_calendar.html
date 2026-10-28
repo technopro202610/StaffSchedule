@@ -1,0 +1,39 @@
+<!-- ========================================================= 
+     No3 カレンダー画面（ヘッダー・メンバー一覧・予定表）。No4〜No8・No11〜No13 のダイアログは JavaScript で作ります
+     index.html が読み込んで、<div id="layer"> の前に差し込みます。
+ ========================================================= -->
+<!-- ============ App ============ -->
+<div id="app" hidden>
+  <header class="topbar">
+    <div class="topbar-in gutter">
+      <div class="brand-wrap"><button class="top-btn icon-btn" id="sideBtn" type="button" aria-controls="sidePanel" aria-expanded="true" aria-label="メンバー一覧を隠す" title="メンバー一覧を隠す"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button>
+      <h1 class="brand"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M7.5 14h.01M12 14h.01M16.5 14h.01M7.5 17.5h.01M12 17.5h.01"/></svg>スケジュール管理</h1></div>
+      <div class="period">
+        <button class="ghost" id="prevBtn" aria-label="前へ"><svg class="icon" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <h2 class="num" id="periodLabel"></h2>
+        <button class="ghost" id="nextBtn" aria-label="次へ"><svg class="icon" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+      </div>
+      <div class="top-actions">
+        <button class="top-btn today-btn" id="todayBtn">今週</button>
+        <button class="top-btn icon-btn" id="calBtn" aria-haspopup="dialog" aria-label="日付を選択" title="日付を選択"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></button>
+        <button class="top-btn noti-btn icon-btn" id="notiBtn" aria-haspopup="dialog" aria-label="お知らせ" title="お知らせ"><svg class="icon" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 20a2 2 0 0 0 4 0"/></svg><span class="noti-badge" id="notiBadge" hidden></span></button>
+        <button class="top-btn" id="logoutBtn">ログアウト</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main gutter">
+    <aside class="panel side" id="sidePanel" aria-label="メンバー一覧">
+      <div class="search">
+        <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+        <input id="searchInput" class="input" type="search" placeholder="メンバー名で検索" aria-label="メンバー名で検索">
+      </div>
+      <div class="side-title">メンバー（50音順）<span class="side-actions"><button class="mini-btn danger" id="delMemberBtn" title="☑が入っているメンバーを削除します"><svg class="icon" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>削除</button><button class="mini-btn" id="addMemberBtn"><svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>追加</button></span></div>
+      <ul class="mlist" id="memberList"></ul>
+    </aside>
+
+    <section class="panel board" aria-label="スケジュール">
+      <div class="scroller" id="boardBody"></div>
+    </section>
+  </main>
+</div>

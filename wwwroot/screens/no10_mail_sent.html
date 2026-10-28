@@ -1,0 +1,25 @@
+<!-- ========================================================= 
+     No10 メール送信完了画面
+     index.html が読み込んで、<div id="layer"> の前に差し込みます。
+ ========================================================= -->
+<!-- ② 送信完了 -->
+<section id="forgotSent" class="gutter" aria-label="メール送信完了" hidden>
+  <div class="login-card">
+    <div class="login-head">
+      <h1>メールを送信しました</h1>
+      <p>メールに記載されたリンクから再設定してください</p>
+    </div>
+    <div class="login-body">
+      <p class="ok" style="margin:0"><b id="fsTo"></b> へパスワード再設定用のリンクを送信しました。</p>
+      <ul class="hint-list">
+        <li>リンクは一度だけ使用できます。</li>
+        <li>メールが届かない場合は、メールアドレスに誤りがないか、迷惑メールフォルダーに入っていないかを確認してください。</li>
+      </ul>
+      <div class="reg-actions">
+        <button type="button" class="link" id="fsRetry">メールアドレスを入力し直す</button>
+        <button type="button" class="btn btn-primary" id="fsBack">ログイン画面に戻る</button>
+      </div>
+      
+    </div>
+  </div>
+</section>

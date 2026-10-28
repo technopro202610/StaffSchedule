@@ -1,0 +1,41 @@
+<!-- ========================================================= 
+     No2 新規会員登録画面
+     index.html が読み込んで、<div id="layer"> の前に差し込みます。
+ ========================================================= -->
+<!-- ============ User registration ============ -->
+<section id="register" class="gutter" aria-label="新規登録" hidden>
+  <form class="login-card" id="regForm" novalidate>
+    <div class="login-head">
+      <h1>新規登録</h1>
+      <p>スタンバイ管理システムの利用者を登録します</p>
+    </div>
+    <div class="login-body">
+      <div class="rfield">
+        <label for="regName">名前</label>
+        <input id="regName" class="input" type="text" autocomplete="name" maxlength="30" placeholder="例：山田 太郎">
+        <p class="ferr" id="regName-err" hidden></p>
+      </div>
+      <div class="rfield">
+        <label for="regMail">メールアドレス（ログインID）</label>
+        <input id="regMail" class="input" type="email" autocomplete="email" spellcheck="false" placeholder="例：taro.yamada@technopro.com">
+        <p class="ferr" id="regMail-err" hidden></p>
+      </div>
+      <div class="rfield">
+        <label for="regPw">パスワード</label>
+        <input id="regPw" class="input" type="password" autocomplete="new-password">
+        <small>8文字以上で、英字と数字を両方含めてください。</small>
+        <p class="ferr" id="regPw-err" hidden></p>
+      </div>
+      <div class="rfield">
+        <label for="regPw2">パスワード（確認）</label>
+        <input id="regPw2" class="input" type="password" autocomplete="new-password">
+        <p class="ferr" id="regPw2-err" hidden></p>
+      </div>
+      <label class="check"><input type="checkbox" id="regShowPw"> パスワードを表示</label>
+      <div class="reg-actions">
+        <button type="button" class="link" id="toLogin">ログイン画面に戻る</button>
+        <button class="btn btn-primary" type="submit">登録する</button>
+      </div>
+    </div>
+  </form>
+</section>

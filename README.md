@@ -19,7 +19,7 @@ C# から PostgreSQL につなぐライブラリ（Npgsql）は、初回ビル�
 ## 2. 全体の構成
 
 ```
-ブラウザ（wwwroot/index.html）
+ブラウザ（wwwroot/index.html ＋ 画面ごとの screens/*.html・*.js）
    │  fetch で JSON を送受信／ログイン状態は Cookie
    ▼
 AuthController ……… APIの入口（URLとHTTPステータスを決める）
@@ -61,7 +61,21 @@ PostgreSQL（staff_schedule データベース / users テーブル）
 | `Repositories/UserRepository.cs` | SQL（SELECT / INSERT … RETURNING / UPDATE） |
 | `Data/DbConnectionFactory.cs` | PostgreSQL への接続の作成 |
 | `Models/` | テーブルの1行、画面とやり取りするデータの形 |
-| `wwwroot/index.html` | プロトタイプの画面（API接続版） |
+| `wwwroot/index.html` | 画面の外枠だけ。`js/app.js` を読み込む |
+| `wwwroot/js/app.js` | 起動係。画面の HTML と JS を決まった順番で読み込み、最後にログイン状態を確認する。ファイルを増やしたらここの一覧に追加 |
+| `wwwroot/js/common.js` | 全画面で使う共通部品（api・トースト・日付・保存データ・祝日など）。必ず最初に読み込む |
+| `wwwroot/css/common.css`・`screens.css` | 共通の見た目／画面ごとの見た目 |
+| `wwwroot/screens/no01_login.*` | No1 ログイン（.html＝画面、.js＝処理） |
+| `wwwroot/screens/no02_register.*` | No2 新規会員登録 |
+| `wwwroot/screens/no03_calendar.*` | No3 カレンダー（予定表・メンバー一覧・週の移動・クリックの振り分け） |
+| `wwwroot/screens/no04_schedule.js` | No4 予定登録（ダイアログ） |
+| `wwwroot/screens/no05_member_form.js` | No5 メンバー登録・編集（ダイアログ） |
+| `wwwroot/screens/no06_07_13_confirm.js` | No6・No7 期間外／期間中へ変更の確認、No13 メンバー削除の確認 |
+| `wwwroot/screens/no08_year.js` | No8 年間カレンダー |
+| `wwwroot/screens/no09_reset.*` | No9 パスワード再設定（申請・新しいパスワード・リンク無効） |
+| `wwwroot/screens/no10_mail_sent.*` | No10 メール送信完了 |
+| `wwwroot/screens/no11_12_notice.js` | No11 お知らせ・No12 ログイン時のお知らせ |
+| `wwwroot/screens/no14_autodelete.js` | No14 自動削除（削除日の計算・ログイン時の削除） |
 
 ## 4. 動かし方
 

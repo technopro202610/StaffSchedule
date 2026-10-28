@@ -1,0 +1,69 @@
+<!-- ========================================================= 
+     No9 パスワード再設定画面（① 申請・③ 新しいパスワード・④ リンクが無効）
+     index.html が読み込んで、<div id="layer"> の前に差し込みます。
+ ========================================================= -->
+<!-- ============ Password reset ============ -->
+<!-- ① 再設定の申請：メールアドレスを入力する -->
+<section id="forgot" class="gutter" aria-label="パスワード再設定" hidden>
+  <form class="login-card" id="fgForm" novalidate>
+    <div class="login-head">
+      <h1>パスワード再設定</h1>
+      <p>登録済みのメールアドレスに、再設定用のリンクをお送りします</p>
+    </div>
+    <div class="login-body">
+      <div class="rfield">
+        <label for="fgMail">メールアドレス</label>
+        <input id="fgMail" class="input" type="email" autocomplete="email" spellcheck="false" placeholder="例：taro.yamada@technopro.com">
+        <p class="ferr" id="fgMail-err" hidden></p>
+      </div>
+      <div class="reg-actions">
+        <button type="button" class="link" id="fgBack">ログイン画面に戻る</button>
+        <button class="btn btn-primary" type="submit">送信する</button>
+      </div>
+    </div>
+  </form>
+</section>
+
+<!-- ③ 新しいパスワードの設定（メールのリンクから開く） -->
+<section id="reset" class="gutter" aria-label="新しいパスワードの設定" hidden>
+  <form class="login-card" id="rsForm" novalidate>
+    <div class="login-head">
+      <h1>新しいパスワードの設定</h1>
+      <p id="rsFor">新しいパスワードを入力してください</p>
+    </div>
+    <div class="login-body">
+      <div class="rfield">
+        <label for="rsPw">新しいパスワード</label>
+        <input id="rsPw" class="input" type="password" autocomplete="new-password">
+        <small>8文字以上で、英字と数字を両方含めてください。</small>
+        <p class="ferr" id="rsPw-err" hidden></p>
+      </div>
+      <div class="rfield">
+        <label for="rsPw2">新しいパスワード（確認）</label>
+        <input id="rsPw2" class="input" type="password" autocomplete="new-password">
+        <p class="ferr" id="rsPw2-err" hidden></p>
+      </div>
+      <label class="check"><input type="checkbox" id="rsShowPw"> パスワードを表示</label>
+      <p class="error" id="rsErr" role="alert" hidden></p>
+      <div class="login-actions"><button class="btn btn-primary" type="submit">パスワードを変更する</button></div>
+    </div>
+  </form>
+</section>
+
+<!-- ④ リンクが無効（期限切れ・使用済み） -->
+<section id="resetInvalid" class="gutter" aria-label="リンクが無効" hidden>
+  <div class="login-card">
+    <div class="login-head">
+      <h1>リンクが無効です</h1>
+      <p>パスワードを再設定できませんでした</p>
+    </div>
+    <div class="login-body">
+      <p class="error" style="margin:0">このリンクは有効期限が切れているか、すでに使用されています。</p>
+      <p style="margin:0;font-size:13px;color:var(--muted)">お手数ですが、もう一度パスワード再設定の手続きを行ってください。</p>
+      <div class="reg-actions">
+        <button type="button" class="link" id="riBack">ログイン画面に戻る</button>
+        <button type="button" class="btn btn-primary" id="riRetry">再設定をやり直す</button>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,31 @@
+<!-- ========================================================= 
+     No1 ログイン画面
+     index.html が読み込んで、<div id="layer"> の前に差し込みます。
+ ========================================================= -->
+<!-- ============ Login ============ -->
+<section id="login" class="gutter" aria-label="ログイン">
+  <form class="login-card" id="loginForm" novalidate>
+    <div class="login-head">
+      <h1>スタンバイ管理システム</h1>
+      <p>勤務予定管理カレンダー</p>
+    </div>
+    <div class="login-body">
+      <div class="rfield">
+        <label for="loginUser">メールアドレス</label>
+        <input id="loginUser" class="input" type="email" autocomplete="username" spellcheck="false" placeholder="例：taro.yamada@technopro.com">
+      </div>
+      <div class="rfield">
+        <label for="loginPw">パスワード</label>
+        <input id="loginPw" class="input" type="password" autocomplete="current-password">
+      </div>
+      <div class="sub">
+        <label class="check"><input type="checkbox" id="showPw"> パスワードを表示</label>
+        <button type="button" class="link" id="forgotBtn">パスワードをお忘れの方はこちら</button>
+      </div>
+      <p class="ok" id="loginOk" role="status" hidden></p>
+      <p class="error" id="loginErr" role="alert" hidden></p>
+      <div class="login-actions"><button class="btn btn-primary" type="submit">ログイン</button></div>
+      <p class="to-reg">アカウントをお持ちでない方は <button type="button" class="link" id="toReg">新規登録</button></p>
+    </div>
+  </form>
+</section>
