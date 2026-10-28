@@ -44,6 +44,11 @@ PostgreSQL（staff_schedule データベース / users テーブル）
 | `sql/04_check_queries.sql` | 研修中に中身を確認するクエリ集 |
 | `sql/05_create_dev_roles.sql` | 共有DB用：受講者ごとのDBユーザー（DB担当が実行） |
 | `sql/06_create_password_reset.sql` | パスワード再設定用のトークンを保存するテーブル |
+| `sql/07_create_members_schedules.sql` | メンバー・予定・削除の記録・お知らせの既読のテーブル（詳細設計書「4.テーブル定義」） |
+| `sql/08_seed_dummy_data.sql` | テスト用ダミーデータ（メンバー14名・予定・削除の記録）。何度でも入れ直せる |
+| `sql/09_setup_local_all.sql` | 自分のPCにデータ入りのDBを作る（02・03・06・07・08 をまとめたもの）。pgAdmin の Query Tool で1回実行するだけ |
+| `sql/00_setup_all.sql` | 01〜03・05〜08 をまとめたもの。psql で1回実行すると、データ入りの共有DBができる |
+| `sql/setup_shared_db.ps1` | 講師（DB担当）PCを共有DBにする（Wi-Fiの設定・ファイアウォール・00 の実行・接続情報カードの作成）。管理者のターミナルで実行 |
 | `Controllers/PasswordResetController.cs` | API：パスワード再設定（申請・リンク確認・変更） |
 | `Services/PasswordResetService.cs` | 再設定のルール（トークン作成・期限・メール文面） |
 | `Services/PasswordRules.cs` | パスワードの決まり（登録と再設定で共通） |
@@ -196,6 +201,6 @@ DBは講師の「DB用PC」1台にまとめ、受講者は各自のPCの C# か�
 
 ## 8. まだダミーのままの部分
 
-- **週間スケジュールの予定データ**：プロトタイプのダミーデータのままで、DBにはまだ保存していません。
+- **スケジュール管理画面の予定データ（メンバー一覧のチェック状態を含む）**：プロトタイプのダミーデータのままで、DBにはまだ保存していません。
 - **ログイン後の画面とのつなぎ方**：初期データの12名はメールアドレスで画面のダミーメンバーと結び付きます。新しく登録した人は予定が空の状態で表示されます。
 - **次のステップ**：`schedules` テーブルと `/api/schedules` を作って、予定の読み書きをDBにつなげます。

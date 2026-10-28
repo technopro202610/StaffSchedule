@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS users
 (
     user_id        INTEGER       GENERATED ALWAYS AS IDENTITY,  -- 自動採番の主キー
     email          VARCHAR(256)  NOT NULL,                      -- ログインID
-    display_name   VARCHAR(50)   NOT NULL,                      -- 名前（Teamsの表示名と同じ表記）
+    display_name   VARCHAR(50)   NOT NULL,                      -- 名前
     password_hash  VARCHAR(200)  NOT NULL,                      -- 例: PBKDF2-SHA256$100000$ソルト$ハッシュ
     is_active      BOOLEAN       NOT NULL DEFAULT TRUE,         -- FALSE = 利用停止
     created_at     TIMESTAMPTZ   NOT NULL DEFAULT now(),
