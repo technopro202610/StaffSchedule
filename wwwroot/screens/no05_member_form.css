@@ -1,16 +1,23 @@
 /* No5 メンバー登録・編集画面（ダイアログ） */
 
 /* ---------- 入力フォーム ---------- */
+/* メンバー登録・編集の入力欄を縦に並べる */
 .mform {
   display: grid;
   gap: 14px;
 }
+
+/* 2つの入力欄を横に並べる行 */
 .mform .two {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
+
+/* 画面が狭いとき */
+/* 画面が狭いとき */
 @media (max-width: 480px) {
+  /* 2つの入力欄を縦に並べる */
   .mform .two {
     grid-template-columns: 1fr;
   }

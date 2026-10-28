@@ -26,6 +26,7 @@ public interface IPasswordResetRepository
 
 public sealed class PasswordResetRepository : IPasswordResetRepository
 {
+    // DB への接続を作る係
     private readonly IDbConnectionFactory _db;
 
     public PasswordResetRepository(IDbConnectionFactory db) => _db = db;
@@ -34,6 +35,8 @@ public sealed class PasswordResetRepository : IPasswordResetRepository
     {
         await using NpgsqlConnection conn = _db.Create();
         await conn.OpenAsync();
+
+        // トランザクション：下の2つの SQL を「全部成功」か「全部取り消し」にする
         await using NpgsqlTransaction tx = await conn.BeginTransactionAsync();
 
         // 古いリンクは使えなくする（最後に送ったメールのリンクだけが有効）
@@ -47,6 +50,7 @@ public sealed class PasswordResetRepository : IPasswordResetRepository
             await cmd.ExecuteNonQueryAsync();
         }
 
+        // S07：新しいトークンを登録する（期限＝今から validMinutes 分）
         const string insert = """
             INSERT INTO password_reset_tokens (user_id, token_hash, expires_at)
             VALUES (@user_id, @token_hash, now() + make_interval(mins => @minutes));
@@ -59,11 +63,13 @@ public sealed class PasswordResetRepository : IPasswordResetRepository
             await cmd.ExecuteNonQueryAsync();
         }
 
+        // ここまで成功したら確定する
         await tx.CommitAsync();
     }
 
     public async Task<User?> FindUserByValidTokenAsync(string tokenHash)
     {
+        // S08：有効なトークン（未使用・期限内・利用中のユーザー）の利用者を探す
         const string sql = """
             SELECT u.user_id, u.email, u.display_name, u.password_hash, u.is_active, u.created_at, u.last_login_at
             FROM password_reset_tokens t
@@ -87,6 +93,8 @@ public sealed class PasswordResetRepository : IPasswordResetRepository
     {
         await using NpgsqlConnection conn = _db.Create();
         await conn.OpenAsync();
+
+        // トランザクション：「トークンを使用済みにする」と「パスワードを変える」を一緒に行う
         await using NpgsqlTransaction tx = await conn.BeginTransactionAsync();
 
         // 1. トークンを使用済みにする。有効なトークンのときだけ1行更新され、user_id が返る。
@@ -130,10 +138,12 @@ public sealed class PasswordResetRepository : IPasswordResetRepository
             user = Map(r);
         }
 
+        // 両方成功したら確定する
         await tx.CommitAsync();
         return user;
     }
 
+    // 読み取った1行を User クラスに詰め替える
     private static User Map(NpgsqlDataReader r) => new()
     {
         UserId = r.GetInt32(r.GetOrdinal("user_id")),

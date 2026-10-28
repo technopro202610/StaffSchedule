@@ -2,7 +2,7 @@
 /* 画面ごとの CSS のあとに読み込みます（上書きの順番を変えないため）。 */
 
 /* ---------- ポップアップ ---------- */
-/* Popovers */
+/* ポップアップ（年間カレンダー・お知らせ・全件表示）の共通の見た目 */
 .pop {
   position: absolute;
   z-index: 30;
@@ -14,7 +14,7 @@
 }
 
 /* ---------- ダイアログ（モーダル）・トースト ---------- */
-/* Modal & drawer */
+/* ダイアログの後ろの暗い幕（画面全体をおおう） */
 .scrim {
   position: fixed;
   inset: 0;
@@ -24,6 +24,9 @@
   place-items: center;
   padding: 16px;
 }
+
+/* ダイアログの白い枠（画面より高いときは中でスクロール） */
+/* ダイアログの白い枠（画面より高いときは中でスクロール） */
 .modal {
   width: 100%;
   max-width: 800px;
@@ -33,6 +36,9 @@
   border-radius: 14px;
   box-shadow: var(--shadow);
 }
+
+/* ダイアログの上の行（タイトル） */
+/* ダイアログの上の行（タイトル） */
 .modal header {
   display: flex;
   align-items: center;
@@ -40,27 +46,42 @@
   padding: 16px 20px;
   border-bottom: 1px solid var(--line);
 }
+
+/* ダイアログのタイトル */
+/* ダイアログのタイトル */
 .modal header h3 {
   margin: 0;
   font-size: 17px;
 }
+
+/* タイトルの下の説明 */
 .modal header p {
   margin: 0;
   color: var(--muted);
   font-size: 13px;
 }
+
+/* タイトル行の右のボタン */
 .modal header .ghost {
   margin-left: auto;
   color: var(--muted);
 }
+
+/* タイトル行のボタンにマウスを乗せたとき */
 .modal header .ghost:hover {
   background: var(--surface2);
 }
+
+/* ダイアログの中身 */
+/* ダイアログの中身 */
 .modal .body {
   padding: 16px 20px;
   display: grid;
   gap: 10px;
 }
+
+/* ダイアログの下のボタンの行 */
+/* ダイアログの下のボタンの行 */
 .modal footer {
   display: flex;
   flex-wrap: wrap;
@@ -69,9 +90,13 @@
   border-top: 1px solid var(--line);
   align-items: center;
 }
+
+/* ボタンを右に寄せるためのすき間 */
 .modal footer .grow {
   flex: 1;
 }
+
+/* 小さな札（枠付きの太字） */
 .tag {
   font-size: 11px;
   border: 1px solid;
@@ -79,6 +104,9 @@
   padding: 0 6px;
   font-weight: 700;
 }
+
+/* 画面の下に少しだけ出るお知らせ（トースト） */
+/* 画面の下に少しだけ出るお知らせ（トースト） */
 .toast {
   position: fixed;
   left: 50%;
@@ -92,12 +120,18 @@
   font-size: 13px;
   box-shadow: var(--shadow);
 }
+
+/* 動きを減らす設定にしていないとき */
 @media (prefers-reduced-motion: no-preference) {
+  /* ダイアログ・ポップアップ・トーストをふわっと出す */
+  /* ダイアログ・ポップアップ・トーストをふわっと出す */
   .scrim,
   .pop,
   .toast {
     animation: fade 0.15s ease-out;
   }
+
+  /* ふわっと出る動き（透明 → 見える） */
   @keyframes fade {
     from {
       opacity: 0;
@@ -115,16 +149,22 @@
   line-height: 1;
   font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", var(--font);
 }
+
+/* 予定表の札の中のマーク（小さめ） */
 .chip .lbl .mark {
   width: 16px;
   height: 16px;
   font-size: 13px;
 }
+
+/* 予定登録の表の中のマーク（大きめ） */
 .itname .mark {
   width: 20px;
   height: 20px;
   font-size: 17px;
 }
+
+/* 文字の雨の四角 */
 .rain {
   display: inline-block;
   position: relative;
@@ -135,6 +175,8 @@
   vertical-align: middle;
   line-height: 1;
 }
+
+/* 文字の雨の1列（下から上へ流れる） */
 .rain i {
   position: absolute;
   top: 0;
@@ -146,13 +188,19 @@
   font-family: var(--font);
   font-weight: 700;
 }
+
+/* がじゅまるの文字の雨の背景（濃い緑） */
 .rain-j {
   background: #2b3a1c;
 }
+
+/* がじゅまるの文字の色（明るい緑） */
 .rain-j i {
   color: #b9e27a;
   text-shadow: 0 0 2px #6f9a2f;
 }
+
+/* 文字の雨の動き（下から上へ） */
 @keyframes rainfall {
   from {
     transform: translateY(20%);
@@ -161,7 +209,10 @@
     transform: translateY(-75%);
   }
 }
+
+/* 動きを減らす設定にしているとき */
 @media (prefers-reduced-motion: reduce) {
+  /* 文字の雨を止める */
   .rain i {
     animation: none;
     transform: translateY(-20%);

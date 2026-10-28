@@ -1,36 +1,53 @@
 /* No8 年間カレンダー（日付選択） */
 
+/* 年間カレンダーのポップアップ（幅は画面からはみ出さない） */
 .cal-pop {
   width: min(760px, calc(100vw - 32px));
   padding: 14px;
 }
+
+/* 上の行：「＜ 2026年 ＞」 */
 .cal-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 10px;
 }
+
+/* 表示中の年 */
 .cal-head b {
   font-size: 16px;
 }
+
+/* 「＜」「＞」にマウスを乗せたとき */
 .cal-head .ghost:hover {
   background: var(--surface2);
 }
+
+/* 12か月分を4列に並べる */
 .months {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;
 }
+
+/* 画面が狭いとき */
+/* 画面が狭いとき */
 @media (max-width: 720px) {
+  /* 2列に並べる */
   .months {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+/* 1か月分の枠 */
 .mon {
   border: 1px solid var(--line);
   border-radius: 8px;
   overflow: hidden;
 }
+
+/* 月の見出し（青い帯） */
 .mon h4 {
   margin: 0;
   background: var(--accent);
@@ -40,12 +57,16 @@
   padding: 4px 0;
   font-weight: 700;
 }
+
+/* 1か月分の日付の表 */
 .mon table {
   width: 100%;
   border-collapse: collapse;
   font-size: 11.5px;
   font-family: var(--mono);
 }
+
+/* 曜日の見出し */
 .mon th {
   font-family: var(--font);
   font-weight: 500;
@@ -54,21 +75,31 @@
   font-size: 11px;
   border-bottom: 1px solid var(--line);
 }
+
+/* 日曜日の列は赤 */
 .mon th:first-child,
 .mon td:first-child button {
   color: var(--sun);
 }
+
+/* 土曜日の列は青 */
 .mon th:last-child,
 .mon td:last-child button {
   color: var(--sat);
 }
+
+/* 祝日は赤 */
 .mon td button.hol {
   color: var(--sun);
 }
+
+/* 日付のマス */
 .mon td {
   padding: 0;
   text-align: center;
 }
+
+/* 日付のボタン */
 .mon td button {
   width: 100%;
   border: 1px solid transparent;
@@ -77,16 +108,24 @@
   border-radius: 4px;
   font-family: inherit;
 }
+
+/* 日付にマウスを乗せたとき */
 .mon td button:hover {
   background: var(--accent-soft);
 }
+
+/* 予定表に表示中の週（薄い青） */
 .mon td button.sel {
   background: var(--accent-soft);
 }
+
+/* 今日（紺の枠・太字） */
 .mon td button.td {
   border-color: var(--today);
   font-weight: 700;
 }
+
+/* 下の「今日: YYYY/MM/DD」 */
 .cal-foot {
   display: flex;
   align-items: center;
@@ -94,6 +133,8 @@
   margin-top: 10px;
   font-size: 13px;
 }
+
+/* 表示できる期間（前後1年）の外の日：薄くして押せなくする */
 .mon td button:disabled,
 .mon td button:disabled:hover {
   opacity: 0.25;

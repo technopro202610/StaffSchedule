@@ -34,16 +34,21 @@ public sealed class SmtpEmailSender : IEmailSender
 
     public async Task SendAsync(string to, string subject, string body)
     {
+        // 1. メールを作る（本文・件名は UTF-8 で日本語が文字化けしないように）
         using var message = new MailMessage(_options.From, to, subject, body)
         {
             BodyEncoding = Encoding.UTF8,
             SubjectEncoding = Encoding.UTF8,
         };
+
+        // 2. SMTP サーバーにつなぐ準備（ユーザー名があればログイン情報も付ける）
         using var client = new SmtpClient(_options.Host, _options.Port) { EnableSsl = _options.EnableSsl };
         if (_options.User.Length > 0)
         {
             client.Credentials = new NetworkCredential(_options.User, _options.Password);
         }
+
+        // 3. 送る
         await client.SendMailAsync(message);
     }
 }
@@ -65,9 +70,14 @@ public sealed class FileEmailSender : IEmailSender
 
     public async Task SendAsync(string to, string subject, string body)
     {
+        // 1. mails フォルダーがなければ作る
         Directory.CreateDirectory(_folder);
+
+        // 2. ファイル名に使えない文字を「_」にして、「日時_あて先.txt」の名前を決める
         string safeTo = string.Concat(to.Select(c => char.IsLetterOrDigit(c) || c is '.' or '_' or '-' ? c : '_'));
         string path = Path.Combine(_folder, $"{DateTime.Now:yyyyMMdd-HHmmss}_{safeTo}.txt");
+
+        // 3. ファイルに保存し、ログにも本文を出す（リンクをコピーして開ける）
         string text = $"To: {to}\nSubject: {subject}\n\n{body}\n";
         await File.WriteAllTextAsync(path, text, Encoding.UTF8);
         _logger.LogInformation("【開発用】メールは送らずに保存しました: {Path}\n{Body}", path, body);

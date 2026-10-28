@@ -28,15 +28,18 @@ public interface IUserRepository
 
 public sealed class UserRepository : IUserRepository
 {
+    // SELECT で読む列（User クラスに詰める列）
     private const string SelectColumns =
         "user_id, email, display_name, password_hash, is_active, created_at, last_login_at";
 
+    // DB への接続を作る係
     private readonly IDbConnectionFactory _db;
 
     public UserRepository(IDbConnectionFactory db) => _db = db;
 
     public async Task<User?> FindByEmailAsync(string email)
     {
+        // S01：メールアドレスでユーザーを探す
         const string sql = $"SELECT {SelectColumns} FROM users WHERE email = @email;";
 
         await using NpgsqlConnection conn = _db.Create();
@@ -50,6 +53,7 @@ public sealed class UserRepository : IUserRepository
 
     public async Task<User?> FindByIdAsync(int userId)
     {
+        // S04：利用者IDでユーザーを探す
         const string sql = $"SELECT {SelectColumns} FROM users WHERE user_id = @user_id;";
 
         await using NpgsqlConnection conn = _db.Create();
@@ -63,6 +67,7 @@ public sealed class UserRepository : IUserRepository
 
     public async Task<bool> EmailExistsAsync(string email)
     {
+        // S02：同じメールアドレスがすでにあるか（true / false）
         const string sql = "SELECT EXISTS (SELECT 1 FROM users WHERE email = @email);";
 
         await using NpgsqlConnection conn = _db.Create();
@@ -77,6 +82,7 @@ public sealed class UserRepository : IUserRepository
     public async Task<User> InsertAsync(string email, string displayName, string passwordHash)
     {
         // RETURNING で、登録した行（自動採番の user_id など）をそのまま受け取る
+        // S03：ユーザーを登録する
         const string sql = $"""
             INSERT INTO users (email, display_name, password_hash)
             VALUES (@email, @display_name, @password_hash)
@@ -90,6 +96,7 @@ public sealed class UserRepository : IUserRepository
         cmd.Parameters.Add("display_name", NpgsqlDbType.Varchar).Value = displayName;
         cmd.Parameters.Add("password_hash", NpgsqlDbType.Varchar).Value = passwordHash;
 
+        // 登録する。同じメールアドレスがあると DB の UNIQUE 制約で止まる
         try
         {
             await using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync();
@@ -105,6 +112,7 @@ public sealed class UserRepository : IUserRepository
 
     public async Task UpdateLastLoginAsync(int userId)
     {
+        // S05：最後にログインした日時を今にする
         const string sql = "UPDATE users SET last_login_at = now() WHERE user_id = @user_id;";
 
         await using NpgsqlConnection conn = _db.Create();

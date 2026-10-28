@@ -26,19 +26,26 @@ public sealed class Pbkdf2PasswordHasher : IPasswordHasher
 
     public string Hash(string password)
     {
+        // 1. ソルト（1人ずつ違う乱数）を作る
         byte[] salt = RandomNumberGenerator.GetBytes(SaltSize);
+
+        // 2. パスワード＋ソルトを、10万回くり返してハッシュにする
         byte[] key = Rfc2898DeriveBytes.Pbkdf2(password, salt, Iterations, Algorithm, KeySize);
+
+        // 3. 「方式$回数$ソルト$ハッシュ」の1つの文字にして返す（これを DB に保存する）
         return string.Join('$', Prefix, Iterations, Convert.ToBase64String(salt), Convert.ToBase64String(key));
     }
 
     public bool Verify(string password, string storedHash)
     {
+        // 1. 保存した文字を「$」で4つに分け、形が正しいか確かめる
         string[] parts = storedHash.Split('$');
         if (parts.Length != 4 || parts[0] != Prefix || !int.TryParse(parts[1], out int iterations))
         {
             return false;
         }
 
+        // 2. ソルトと、保存したハッシュを取り出す（壊れていたら失敗）
         byte[] salt, expected;
         try
         {

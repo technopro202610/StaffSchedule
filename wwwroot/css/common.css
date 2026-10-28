@@ -6,15 +6,22 @@
 html {
   color-scheme: light;
 }
+
+/* ページ全体の背景色・文字色・文字の種類と大きさ */
 body {
   margin: 0;
 }
+
+/* hidden を付けた要素は必ず隠す（display の指定より優先） */
 [hidden] {
   display: none !important;
 }
+
+/* 画像が枠からはみ出さないようにする */
 img {
   max-width: 100%;
 }
+
 /* Layout: 業務アプリ。紺のヘッダー帯 → 左にメンバー一覧、右にメンバー×曜日のグリッド。勤務区分は色＋アイコン＋文字で表す */
 :root {
   --bg: #f2f5fa;
@@ -65,7 +72,10 @@ img {
   --font: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
   --mono: "Roboto Mono", ui-monospace, Menlo, monospace;
 }
+
+/* パソコンがダークモードのとき（data-theme="light" を指定していなければ）の色 */
 @media (prefers-color-scheme: dark) {
+  /* ダークモード用の色に置きかえる */
   :root:not([data-theme="light"]) {
     --bg: #0e1520;
     --surface: #172030;
@@ -115,6 +125,8 @@ img {
     color-scheme: dark;
   }
 }
+
+/* data-theme="dark" を指定したときも、ダークモードの色にする */
 :root[data-theme="dark"] {
   --bg: #0e1520;
   --surface: #172030;
@@ -163,13 +175,19 @@ img {
   --shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
   color-scheme: dark;
 }
+
+/* 幅・高さに余白と枠線を含めて計算する（レイアウトがずれにくくなる） */
 * {
   box-sizing: border-box;
 }
+
+/* ページの高さを画面いっぱいにする */
 html,
 body {
   min-height: 100%;
 }
+
+/* ページ全体の背景色・文字色・文字の種類と大きさ */
 body {
   background: var(--bg);
   color: var(--fg);
@@ -177,26 +195,39 @@ body {
   font-size: 14px;
   line-height: 1.5;
 }
+
+/* ボタン・入力欄も、ページと同じ文字の種類・色にする */
 button,
 input,
 select {
   font: inherit;
   color: inherit;
 }
+
+/* ボタンの上ではカーソルを指の形にする */
 button {
   cursor: pointer;
 }
+
+/* キーボードで選んでいる部品に、青い枠を出す */
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
+
+/* 数字の幅をそろえる（表や時刻がずれないように） */
 .num {
   font-variant-numeric: tabular-nums;
 }
+
+/* 画面の左右の余白（スマホのノッチにもかからないように） */
+/* 画面の左右の余白（スマホのノッチにもかからないように） */
 .gutter {
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
 }
+
+/* SVG アイコンの大きさと線の太さ */
 .icon {
   width: 18px;
   height: 18px;
@@ -209,17 +240,24 @@ button {
 }
 
 /* ---------- 入力欄・ボタン・メッセージ（ログイン系の画面・ダイアログで共通） ---------- */
+/* 入力欄のまとまり（ラベル・入力欄・説明を縦に並べる） */
 .rfield {
   display: grid;
   gap: 6px;
 }
+
+/* 入力欄の上のラベル（太字） */
 .rfield label {
   font-weight: 700;
 }
+
+/* 入力欄の下の小さな説明 */
 .rfield small {
   color: var(--muted);
   font-size: 12px;
 }
+
+/* 注意事項の箇条書き（灰色の小さい字） */
 .hint-list {
   margin: 0;
   padding-left: 1.2em;
@@ -228,14 +266,20 @@ button {
   display: grid;
   gap: 4px;
 }
+
+/* 入力欄の下に出すエラーメッセージ（赤字） */
 .ferr {
   margin: 0;
   color: var(--err);
   font-size: 12.5px;
 }
+
+/* エラーのある入力欄は赤枠にする */
 .input.bad {
   border-color: var(--err);
 }
+
+/* フォームの下のボタン行（左にリンク、右にボタン） */
 .reg-actions {
   display: flex;
   justify-content: space-between;
@@ -243,12 +287,16 @@ button {
   gap: 12px;
   flex-wrap: wrap;
 }
+
+/* フォームの下の青いボタン（少し大きく） */
 .reg-actions .btn-primary {
   min-width: 140px;
   justify-content: center;
   height: 44px;
   font-size: 16px;
 }
+
+/* 成功のメッセージ（緑の枠） */
 .ok {
   margin: 0;
   background: var(--o-bg);
@@ -258,6 +306,8 @@ button {
   padding: 10px 12px;
   font-size: 13px;
 }
+
+/* テキストの入力欄 */
 .input {
   width: 100%;
   height: 42px;
@@ -266,6 +316,8 @@ button {
   background: var(--surface);
   padding: 0 12px;
 }
+
+/* プルダウン（右に▼の印を描く） */
 select.input {
   appearance: none;
   background-image:
@@ -278,6 +330,8 @@ select.input {
   background-repeat: no-repeat;
   padding-right: 34px;
 }
+
+/* 「パスワードを表示」などの補助の行 */
 .sub {
   display: flex;
   justify-content: space-between;
@@ -285,17 +339,23 @@ select.input {
   gap: 8px;
   flex-wrap: wrap;
 }
+
+/* チェックボックスとその文字 */
 .check {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   cursor: pointer;
 }
+
+/* チェックボックスの大きさと色 */
 .check input {
   width: 16px;
   height: 16px;
   accent-color: var(--accent);
 }
+
+/* リンクの見た目のボタン（青字・下線） */
 .link {
   background: none;
   border: 0;
@@ -305,6 +365,8 @@ select.input {
   text-align: left;
   width: max-content;
 }
+
+/* ふつうのボタン（白） */
 .btn {
   height: 40px;
   padding: 0 18px;
@@ -316,23 +378,33 @@ select.input {
   align-items: center;
   gap: 6px;
 }
+
+/* ボタンにマウスを乗せたとき */
 .btn:hover {
   background: var(--surface2);
 }
+
+/* 目立つボタン（青） */
 .btn-primary {
   background: var(--accent);
   border-color: var(--accent);
   color: #fff;
 }
+
+/* 青いボタンにマウスを乗せたとき（少し明るく） */
 .btn-primary:hover {
   background: var(--accent);
   filter: brightness(1.08);
 }
+
+/* エラーメッセージ（赤字） */
 .error {
   color: var(--err);
   font-size: 13px;
   margin: 0;
 }
+
+/* 案内の枠（灰色） */
 .notice {
   background: var(--surface2);
   border: 1px solid var(--line);
@@ -341,6 +413,8 @@ select.input {
   font-size: 13px;
   color: var(--muted);
 }
+
+/* 「デモ」などの小さな札 */
 .demo-tag {
   display: inline-block;
   font-size: 11px;
@@ -354,18 +428,23 @@ select.input {
 }
 
 /* ---------- 必須・任意の印、注意書き ---------- */
+/* 「必須」の印（赤） */
 .req {
   color: var(--err);
   font-size: 11px;
   font-weight: 700;
   margin-left: 6px;
 }
+
+/* 「任意」の印（灰色） */
 .opt {
   color: var(--muted);
   font-size: 11px;
   font-weight: 400;
   margin-left: 6px;
 }
+
+/* 注意の枠（オレンジ） */
 .warn {
   margin: 0;
   background: var(--l-bg);

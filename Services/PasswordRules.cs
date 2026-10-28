@@ -8,6 +8,7 @@ namespace StaffSchedule.Services;
 /// </summary>
 public static partial class PasswordRules
 {
+    // パスワードの長さの下限と上限
     public const int MinLength = 8;
     public const int MaxLength = 128;
 
@@ -23,13 +24,16 @@ public static partial class PasswordRules
     public static void Validate(string password, string confirm, IDictionary<string, string> errors,
         string emptyMessage = "パスワードを入力してください。")
     {
+        // パスワード：空ではないか、決まりを満たしているか
         if (password.Length == 0) errors["password"] = emptyMessage;
         else if (!IsValid(password)) errors["password"] = "8文字以上で、英字と数字を両方含めてください。";
 
+        // 確認用：空ではないか、パスワードと同じか
         if (confirm.Length == 0) errors["passwordConfirm"] = "確認のため、もう一度パスワードを入力してください。";
         else if (confirm != password) errors["passwordConfirm"] = "上のパスワードと一致しません。";
     }
 
+    // 英字が入っているか・数字が入っているかを調べる正規表現（コンパイル時に作られて速い）
     [GeneratedRegex("[A-Za-z]")] private static partial Regex HasLetter();
     [GeneratedRegex("[0-9]")] private static partial Regex HasDigit();
 }

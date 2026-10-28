@@ -15,6 +15,7 @@ public sealed class PasswordResetService
 {
     public const int ValidMinutes = 30; // リンクの有効期限（分）
 
+    // 使う係：users・再設定トークンのテーブルを読み書きする係、パスワードのハッシュ化、メール送信、ログ
     private readonly IUserRepository _users;
     private readonly IPasswordResetRepository _resets;
     private readonly IPasswordHasher _hasher;
@@ -38,9 +39,11 @@ public sealed class PasswordResetService
     // ---------------------------------------------------------
     public async Task RequestAsync(string? emailInput, string baseUrl)
     {
+        // 1. メールアドレスをそろえる（空なら何もしない）
         string email = UserInput.NormalizeEmail(emailInput);
         if (email.Length == 0) return;
 
+        // 2. ユーザーを探す。いない・利用停止ならメールは送らずに終わる
         User? user = await _users.FindByEmailAsync(email);
         if (user is null || !user.IsActive)
         {
@@ -49,9 +52,11 @@ public sealed class PasswordResetService
         }
 
         // 推測できない長い文字列（32バイトの乱数 → 16進数64文字）を作る
+        // 3. リンク用のトークンを作り、DB にはハッシュにした値と期限を保存する
         string token = Convert.ToHexString(RandomNumberGenerator.GetBytes(32)).ToLowerInvariant();
         await _resets.CreateAsync(user.UserId, HashToken(token), ValidMinutes);
 
+        // 4. メールの本文を作る（リンク＝http://…/?reset=トークン）
         string link = $"{baseUrl.TrimEnd('/')}/?reset={token}";
         string body = $"""
             {user.DisplayName} 様
@@ -67,6 +72,8 @@ public sealed class PasswordResetService
 
             ※このメールは送信専用です。返信はできません。
             """;
+
+        // 5. メールを送る（研修環境では mails フォルダーに保存される）
         await _mail.SendAsync(user.Email, "【スタンバイ管理システム】パスワード再設定のご案内", body);
     }
 
@@ -75,6 +82,7 @@ public sealed class PasswordResetService
     // ---------------------------------------------------------
     public async Task<User?> VerifyAsync(string? token)
     {
+        // トークンが空なら使えない。あれば、ハッシュにして DB で探す
         if (string.IsNullOrWhiteSpace(token)) return null;
         return await _resets.FindUserByValidTokenAsync(HashToken(token));
     }
@@ -84,12 +92,16 @@ public sealed class PasswordResetService
     // ---------------------------------------------------------
     public async Task<PasswordResetResult> ConfirmAsync(PasswordResetConfirmRequest request)
     {
+        // 入力欄ごとのエラー（キー：password / passwordConfirm）
         var errors = new Dictionary<string, string>();
+
+        // 1. トークンがない → リンクが使えない
         if (string.IsNullOrWhiteSpace(request.Token))
         {
             return new PasswordResetResult(PasswordResetStatus.InvalidToken, errors);
         }
 
+        // 2. 新しいパスワードの決まりをチェック。エラーがあれば終わり
         PasswordRules.Validate(request.Password ?? "", request.PasswordConfirm ?? "", errors,
             emptyMessage: "新しいパスワードを入力してください。");
         if (errors.Count > 0)
@@ -97,12 +109,15 @@ public sealed class PasswordResetService
             return new PasswordResetResult(PasswordResetStatus.InvalidInput, errors);
         }
 
+        // 3. トークンが有効なら、パスワードを書き換えてトークンを使用済みにする
+        //    （有効でなければ null が返る）
         User? user = await _resets.ResetPasswordAsync(HashToken(request.Token), _hasher.Hash(request.Password!));
         if (user is null)
         {
             return new PasswordResetResult(PasswordResetStatus.InvalidToken, errors);
         }
 
+        // 4. 成功
         _logger.LogInformation("パスワードを再設定しました。UserId={UserId}", user.UserId);
         return new PasswordResetResult(PasswordResetStatus.Succeeded, errors, user.Email);
     }

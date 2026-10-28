@@ -11,9 +11,11 @@ namespace StaffSchedule.Services;
 /// </summary>
 public sealed partial class RegisterService
 {
+    // 入力の長さの上限（users テーブルの列の長さと合わせる）
     private const int NameMaxLength = 50;
     private const int EmailMaxLength = 256;
 
+    // 使う係：users テーブルを読み書きする係・パスワードをハッシュ化する係・ログを書く係
     private readonly IUserRepository _users;
     private readonly IPasswordHasher _hasher;
     private readonly ILogger<RegisterService> _logger;
@@ -30,6 +32,7 @@ public sealed partial class RegisterService
     // ---------------------------------------------------------
     public async Task<RegisterResult> RegisterAsync(RegisterRequest request)
     {
+        // 0. 入力をそろえる（名前の空白・メールアドレスの小文字）
         string name = NormalizeName(request.Name);
         string email = UserInput.NormalizeEmail(request.Email);
         string password = request.Password ?? "";
@@ -38,9 +41,11 @@ public sealed partial class RegisterService
         // 1. 入力チェック（キーは画面の入力欄に対応）
         var errors = new Dictionary<string, string>();
 
+        // 名前：空ではないか、長すぎないか
         if (name.Length == 0) errors["name"] = "名前を入力してください。";
         else if (name.Length > NameMaxLength) errors["name"] = $"名前は{NameMaxLength}文字以内で入力してください。";
 
+        // メールアドレス：空ではないか、長すぎないか、形が正しいか
         if (email.Length == 0) errors["email"] = "メールアドレスを入力してください。";
         else if (email.Length > EmailMaxLength || !EmailPattern().IsMatch(email))
             errors["email"] = "メールアドレスの形式が正しくありません（例：yamada.taro@example.com）。";
@@ -54,6 +59,7 @@ public sealed partial class RegisterService
             errors["email"] = "このメールアドレスはすでに登録されています。ログイン画面からログインしてください。";
         }
 
+        // エラーがあれば、ここで終わり（DB には登録しない）
         if (errors.Count > 0) return new RegisterResult(null, errors);
 
         // 3. パスワードをハッシュ化してDBに登録
@@ -63,6 +69,8 @@ public sealed partial class RegisterService
             _logger.LogInformation("ユーザーを登録しました。UserId={UserId}", user.UserId);
             return new RegisterResult(user, errors);
         }
+
+        // 同時に同じメールアドレスで登録されたとき（DB の UNIQUE 制約で止まる）
         catch (DuplicateEmailException)
         {
             // 同時に同じメールアドレスで登録されたとき（UNIQUE 制約で弾かれる）

@@ -2,6 +2,7 @@
 /* ログイン系の画面（No2 新規会員登録・No9 パスワード再設定・No10 メール送信完了）も同じ枠（.login-card）を使います。 */
 
 /* ---------- 画面の配置と枠 ---------- */
+/* ログイン系の画面：カード（.login-card）を画面のまん中に置く */
 #login,
 #register,
 #forgot,
@@ -13,6 +14,8 @@
   place-items: center;
   padding-block: 40px;
 }
+
+/* 「新規登録」への案内の行（上に線） */
 .to-reg {
   margin: 0;
   text-align: center;
@@ -21,9 +24,13 @@
   border-top: 1px solid var(--line);
   padding-top: 14px;
 }
+
+/* 案内の行のリンクは文の中に並べる */
 .to-reg .link {
   display: inline;
 }
+
+/* ログイン系の画面の白いカード */
 .login-card {
   width: 100%;
   max-width: 440px;
@@ -33,48 +40,70 @@
   box-shadow: var(--shadow);
   overflow: hidden;
 }
+
+/* カードの上の部分（薄い青の背景・タイトル） */
 .login-head {
   background: var(--accent-soft);
   padding: 26px 24px;
   text-align: center;
 }
+
+/* 画面のタイトル（大きな紺の字） */
+/* 画面のタイトル（大きな紺の字） */
 .login-head h1 {
   margin: 0;
   font-size: 24px;
   color: var(--navy);
   letter-spacing: 0.04em;
 }
+
+/* ダークモードではタイトルを明るい字にする */
 :root[data-theme="dark"] .login-head h1 {
   color: var(--fg);
 }
+
+/* パソコンがダークモードのとき */
 @media (prefers-color-scheme: dark) {
+  /* ダークモードではタイトルを明るい字にする */
   :root:not([data-theme="light"]) .login-head h1 {
     color: var(--fg);
   }
 }
+
+/* タイトルの下の説明（灰色の小さい字） */
 .login-head p {
   margin: 6px 0 0;
   color: var(--muted);
   font-size: 12px;
 }
+
+/* カードの中身（入力欄などを縦に並べる） */
 .login-body {
   padding: 26px 28px 28px;
   display: grid;
   gap: 16px;
 }
+
+/* ラベルと入力欄を横に並べる行（ログイン画面） */
 .field {
   display: grid;
   grid-template-columns: 72px 1fr;
   align-items: center;
   gap: 12px;
 }
+
+/* 行の左のラベル（太字） */
 .field label {
   font-weight: 700;
 }
+
+/* 「ログイン」ボタンの行 */
 .login-actions {
   display: flex;
   justify-content: flex-end;
 }
+
+/* 「ログイン」ボタン（横いっぱい・大きめ） */
 .login-actions .btn-primary {
   width: 100%;
   justify-content: center;
@@ -82,11 +111,16 @@
   font-size: 16px;
   font-weight: 700;
 }
+
+/* スマホなど画面が狭いとき */
 @media (max-width: 440px) {
+  /* ラベルを入力欄の上に置く（縦に並べる） */
   .field {
     grid-template-columns: 1fr;
     gap: 6px;
   }
+
+  /* 補助の行の左の余白をなくす */
   .sub {
     margin-left: 0;
   }

@@ -15,8 +15,10 @@ namespace StaffSchedule.Controllers;
 [Route("api/auth/password-reset")]
 public sealed class PasswordResetController : ControllerBase
 {
+    // リンクが使えないときのメッセージ
     private const string InvalidLinkMessage = "このリンクは有効期限が切れているか、すでに使用されています。";
 
+    // パスワード再設定のルールを持つ係と、設定（appsettings.json）を読む係
     private readonly PasswordResetService _reset;
     private readonly IConfiguration _config;
 
@@ -31,19 +33,22 @@ public sealed class PasswordResetController : ControllerBase
     {
         // メールのリンクの先頭部分。本番では appsettings.json の "App:BaseUrl" に正式なURLを書く。
         // （書いていない研修環境では、今アクセスしているURLを使う）
+        // 1. メールに入れるリンクの先頭部分を決める
         string baseUrl = _config["App:BaseUrl"] is { Length: > 0 } url
             ? url
             : $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}";
 
+        // 2. 登録されていればメールを送る（ルールは PasswordResetService）
         await _reset.RequestAsync(request.Email, baseUrl);
 
-        // 登録の有無にかかわらず、いつも同じ応答を返す
+        // 3. 登録の有無にかかわらず、いつも同じ応答を返す
         return Ok(new ErrorResponse("入力されたメールアドレスが登録されている場合、再設定用のリンクを送信しました。"));
     }
 
     [HttpGet("verify")]
     public async Task<IActionResult> Verify([FromQuery] string? token)
     {
+        // リンクがまだ使えるか調べる。使えなければ 410、使えれば名前とメールアドレスを返す
         var user = await _reset.VerifyAsync(token);
         return user is null
             ? StatusCode(StatusCodes.Status410Gone, new ErrorResponse(InvalidLinkMessage))   // 410：もう使えない
@@ -53,7 +58,10 @@ public sealed class PasswordResetController : ControllerBase
     [HttpPost("confirm")]
     public async Task<IActionResult> Confirm([FromBody] PasswordResetConfirmRequest request)
     {
+        // 新しいパスワードに変える
         PasswordResetResult result = await _reset.ConfirmAsync(request);
+
+        // 結果に合わせて返す：成功＝200、入力の誤り＝400、リンクが使えない＝410
         return result.Status switch
         {
             PasswordResetStatus.Succeeded => Ok(new { email = result.Email }),

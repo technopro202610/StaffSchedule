@@ -5,19 +5,27 @@
 .modal.notice-modal {
   max-width: 480px;
 }
+
+/* お知らせの中身（すき間なしで縦に並べる） */
 .notice-modal .body {
   gap: 0;
   padding: 0 0 12px;
 }
+
+/* 下の説明文の余白 */
 .notice-modal .calc-note {
   padding: 12px 20px 0;
 }
+
+/* 説明文の中のベルのアイコン（文字と同じくらいの大きさ） */
 .calc-note .bell-in {
   width: 14px;
   height: 14px;
   vertical-align: -2px;
   margin: 0 1px;
 }
+
+/* 説明文を1行ずつ改行して出す */
 .calc-note .cn-line {
   display: block;
 }
@@ -27,6 +35,8 @@
 .noti-btn {
   position: relative;
 }
+
+/* お知らせボタンの右上の数字（赤い丸） */
 .noti-badge {
   min-width: 20px;
   height: 20px;
@@ -39,11 +49,15 @@
   display: inline-grid;
   place-items: center;
 }
+
+/* お知らせ一覧（No11）のポップアップ */
 .noti-pop {
   width: min(400px, calc(100vw - 32px));
   padding: 0;
   overflow: hidden;
 }
+
+/* お知らせ一覧の見出し */
 .noti-pop h4 {
   margin: 0;
   padding: 12px 16px;
@@ -54,11 +68,15 @@
   align-items: baseline;
   gap: 8px;
 }
+
+/* 見出しの右の補足（灰色） */
 .noti-pop h4 small {
   color: var(--muted);
   font-weight: 400;
   font-size: 12px;
 }
+
+/* 「削除予定のメンバー」などの区切りの帯 */
 .noti-sec {
   padding: 6px 16px;
   background: var(--surface2);
@@ -67,6 +85,8 @@
   font-weight: 700;
   color: var(--muted);
 }
+
+/* お知らせの一覧（多いときはスクロール） */
 .noti-list {
   list-style: none;
   margin: 0;
@@ -74,6 +94,8 @@
   max-height: 300px;
   overflow: auto;
 }
+
+/* お知らせ1件 */
 .noti-item {
   display: flex;
   gap: 10px;
@@ -86,6 +108,8 @@
   text-align: left;
   color: inherit;
 }
+
+/* お知らせの左の点（削除予定＝赤） */
 .noti-dot {
   width: 8px;
   height: 8px;
@@ -94,28 +118,40 @@
   flex: none;
   background: var(--e-fg);
 }
+
+/* 削除済みの点（灰色） */
 .noti-dot.done {
   background: var(--muted);
 }
+
+/* お知らせの文 */
 .noti-txt {
   flex: 1;
   min-width: 0;
 }
+
+/* お知らせの名前（太字） */
 .noti-item b {
   display: block;
   font-size: 13px;
 }
+
+/* お知らせの日付・説明（灰色） */
 .noti-item small {
   display: block;
   color: var(--muted);
   font-size: 12px;
 }
+
+/* 「あと○日」の表示（赤の太字） */
 .noti-days {
   font-size: 12px;
   font-weight: 700;
   color: var(--e-fg);
   white-space: nowrap;
 }
+
+/* お知らせがないときの文 */
 .noti-empty {
   padding: 16px;
   color: var(--muted);

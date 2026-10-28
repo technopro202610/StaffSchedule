@@ -6,20 +6,28 @@
   border-color: var(--e-fg);
   color: var(--e-fg);
 }
+
+/* 「削除」ボタンにマウスを乗せたとき（薄い赤の背景） */
 .mini-btn.danger:hover {
   background: var(--e-bg);
 }
+
+/* 確認ダイアログの「はい（削除する）」ボタン（赤） */
 .btn-danger {
   background: var(--e-fg);
   border-color: var(--e-fg);
   color: #fff;
 }
+
+/* 「はい（削除する）」にマウスを乗せたとき（文字は白のまま、少し明るく） */
 .btn-danger:hover {
   background: var(--e-fg);
   border-color: var(--e-fg);
   color: #fff;
   filter: brightness(1.12);
 }
+
+/* 削除するメンバーの名前の一覧（枠付き。多いときは枠の中でスクロール） */
 .del-names {
   margin: 4px 0 0;
   padding: 8px 12px 8px 30px;
@@ -31,6 +39,8 @@
   gap: 2px;
   font-size: 14px;
 }
+
+/* 「元に戻せません」の注意（赤の太字） */
 .confirm-warn {
   margin: 6px 0 0;
   font-size: 13px;
@@ -43,11 +53,15 @@
 .modal.confirm-modal {
   max-width: 380px;
 }
+
+/* 確認のメッセージ（「〜しますか？」大きな太字） */
 .confirm-msg {
   margin: 4px 0 0;
   font-size: 16px;
   font-weight: 700;
 }
+
+/* 対象の人数などの補足（灰色） */
 .confirm-sub {
   margin: 0;
   font-size: 13px;
