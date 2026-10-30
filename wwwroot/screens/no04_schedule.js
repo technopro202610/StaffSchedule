@@ -426,5 +426,6 @@ function saveEditor() {
   persist();
   closeLayer();
   render();
+  flashCell(draft.mid + "|" + draft.ds); // どこに保存したか分かるよう、そのマスに目印を付ける（ぎゅいん→ポン。no03_calendar.js）
   toast("勤務予定を保存しました");
 }

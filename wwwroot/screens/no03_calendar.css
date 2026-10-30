@@ -442,6 +442,86 @@
   }
 }
 
+/* =========================================================
+   予定を保存したマスの目印（flashCell が just-saved を付け外しする。全体で約6秒）
+     1. ぎゅいん（0〜1.2秒）：マスの下に青い線が左から伸びる
+     2. 背景が青に（1.2〜1.4秒）：伸びきったら、マスがうっすら青くなる
+     3. ポン（1.35秒〜）：予定の札が、きゅっと縮んで弾む
+     4. 青は約3秒そのままで、そのあと線と一緒にふわっと消える
+   ※ Mac の「視差効果を減らす」など、動きを減らす設定がオンでも同じように動かす（講師の指示）
+   ========================================================= */
+.grid td.dcell.just-saved {
+  position: relative; /* 下線（.saved-bar）の位置の基準にする */
+  animation: saved-bg 6s linear;
+}
+
+/* ポン：マスの中のボタン（予定の札・「予定 n件」）が弾む */
+.grid td.dcell.just-saved > button {
+  animation: saved-pop 0.6s cubic-bezier(0.3, 1.6, 0.5, 1) 1.35s;
+}
+
+/* ぎゅいん：マスの下の青い線。文字がにじまないよう、拡大ではなく長さ（width）を伸ばす */
+.saved-bar {
+  position: absolute;
+  left: 8px;
+  bottom: 3px;
+  width: 0;
+  height: 3px;
+  border-radius: 3px;
+  background: var(--accent);
+  pointer-events: none;
+  animation: saved-bar 6s linear forwards;
+}
+
+@keyframes saved-bar {
+  0% {
+    width: 0;
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.3, 0.7, 0.3, 1);
+  }
+  20% {
+    width: calc(100% - 16px);
+    opacity: 1;
+  }
+  85% {
+    width: calc(100% - 16px);
+    opacity: 1;
+  }
+  100% {
+    width: calc(100% - 16px);
+    opacity: 0;
+  }
+}
+
+@keyframes saved-bg {
+  0%,
+  20% {
+    background: transparent;
+  }
+  23%,
+  75% {
+    background: var(--accent-soft);
+  }
+  100% {
+    background: transparent;
+  }
+}
+
+@keyframes saved-pop {
+  0% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(0.9);
+  }
+  70% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 /* メンバー一覧の欄の見出し（「スタンバイ期間中」「スタンバイ期間外」） */
 .list-sep {
   display: flex;
@@ -990,6 +1070,8 @@ table.grid {
   padding: 10px;
   display: grid;
   gap: 6px;
+  max-height: calc(100vh - 32px); /* 画面より高くならない（予定がとても多い日用） */
+  overflow-y: auto; /* 入りきらない分は、プルダウンの中でスクロール */
 }
 
 /* プルダウンの見出し（日付・名前・件数） */

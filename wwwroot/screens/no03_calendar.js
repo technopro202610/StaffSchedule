@@ -474,6 +474,36 @@ function renderWeek() {
   getElement("#boardBody").innerHTML = html.join("");
 }
 
+// 予定を保存したマスに目印を付ける（どこに保存したか、ひと目で分かるように）
+//   ぎゅいん（下線が伸びる）→ 背景が青に → ポン（札が弾む）→ 約6秒でふわっと消える。見た目は no03_calendar.css
+//   key … "メンバーID|YYYY-MM-DD"
+function flashCell(key) {
+  const button = document.querySelector(`#boardBody [data-edit="${key}"], #boardBody [data-more="${key}"]`);
+  if (!button) {
+    return; // 表示中の週・表示中のメンバーでなければ何もしない
+  }
+  const cell = button.closest("td");
+  cell.scrollIntoView({ block: "nearest", inline: "nearest" }); // 見えない位置なら、見える所までスクロール
+
+  // 続けて保存したときも、最初からやり直す
+  cell.classList.remove("just-saved");
+  cell.querySelectorAll(".saved-bar").forEach((bar) => bar.remove());
+  void cell.offsetWidth;
+
+  // 下線（ぎゅいん）を足して、目印を付ける
+  const bar = document.createElement("span");
+  bar.className = "saved-bar";
+  bar.setAttribute("aria-hidden", "true");
+  cell.appendChild(bar);
+  cell.classList.add("just-saved");
+
+  // 約6秒たったら、目印を外す
+  setTimeout(() => {
+    cell.classList.remove("just-saved");
+    bar.remove();
+  }, 6100);
+}
+
 /* =========================================================
    6. 備考・長い名前のふきだし
    ========================================================= */
@@ -576,7 +606,17 @@ function placeMorePop() {
   const maxLeft = window.scrollX + document.documentElement.clientWidth - popWidth - 16;
   const left = Math.max(16, Math.min(buttonRect.left + window.scrollX, maxLeft));
   pop.style.left = left + "px";
-  pop.style.top = buttonRect.bottom + window.scrollY + 4 + "px";
+
+  // 縦の位置：ふつうはボタンの真下に開く。
+  //   下に入りきらないとき（表の一番下の行など）は、ボタンの真上に開く。
+  //   上下どちらにも入りきらないときは、広いほうに開く（中身はスクロールできる）
+  const popHeight = pop.offsetHeight;
+  const spaceBelow = document.documentElement.clientHeight - buttonRect.bottom - 8;
+  const spaceAbove = buttonRect.top - 8;
+  const opensUp = popHeight + 4 > spaceBelow && spaceAbove > spaceBelow;
+  const top = opensUp ? buttonRect.top - popHeight - 4 : buttonRect.bottom + 4;
+  pop.style.top = Math.max(8, top) + window.scrollY + "px";
+  pop.classList.toggle("opens-up", opensUp); // 上に開いているか（見た目の調整用）
 }
 
 getElement("#boardBody").addEventListener("scroll", placeMorePop);
