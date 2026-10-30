@@ -135,7 +135,7 @@ function editorRowHtml(row, i) {
     : `<span class="dot" style="background:${item.dot}"></span>`;
   let label;
   if (row.item === "other") {
-    label = `<input class="input itin" id="ed-n-${i}" value="${escapeHtml(row.note)}" maxlength="20" placeholder="任意で入力" title="自由記述の項目名（例：研修）" aria-label="自由記述の項目名">`;
+    label = `<input class="input itin" id="ed-n-${i}" value="${escapeHtml(row.note)}" maxlength="10" placeholder="任意で入力" title="自由記述の項目名（10文字まで。例：研修）" aria-label="自由記述の項目名">`;
   } else {
     label = `<b>${name}</b>`;
   }
@@ -227,9 +227,18 @@ function attachRowEvents(row, i) {
   for (const idPrefix of ["#ed-s-", "#ed-e-"]) {
     const timeInput = getElement(idPrefix + i);
 
-    // 入力するたび：数字と「:」以外は消す。何か入れたら、その行に自動でチェック
+    // 欄に入ったとき：「09:00」を「0900」にして全体を選ぶ（数字4桁で打ち直せるように）
+    timeInput.addEventListener("focus", () => {
+      const digits = timeDigits(timeInput.value);
+      if (digits !== timeInput.value) {
+        timeInput.value = digits;
+      }
+      timeInput.select();
+    });
+
+    // 入力するたび：数字以外は消し、4桁までにする。何か入れたら、その行に自動でチェック
     timeInput.addEventListener("input", () => {
-      const cleaned = cleanTime(timeInput.value);
+      const cleaned = timeDigits(timeInput.value);
       if (cleaned !== timeInput.value) {
         timeInput.value = cleaned;
       }
@@ -294,6 +303,13 @@ function leaveAdjust(itemCode, isChecked) {
 /* =========================================================
    3. 時刻の入力（24時間表記 HH:MM）
    ========================================================= */
+
+// 時刻の欄に入力できる形にする：数字だけ・4桁まで（例："9:00" → "900"、"０９３０" → "0930"、"12345" → "1234"）
+function timeDigits(text) {
+  return cleanTime(String(text || ""))
+    .replace(/:/g, "")
+    .slice(0, 4);
+}
 
 // 全角数字を半角にし、数字と「:」だけを残す（例："９：００" → "9:00"）
 function cleanTime(text) {
